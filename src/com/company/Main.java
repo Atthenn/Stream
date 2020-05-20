@@ -4,6 +4,7 @@ import com.sun.xml.internal.ws.api.model.wsdl.WSDLOutput;
 import org.w3c.dom.ls.LSOutput;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Main {
@@ -27,6 +28,55 @@ public class Main {
 
         //Stream Way
 
+        Employee employee1 = new Employee("john1",21);
+        Employee employee2 = new Employee("john2",22);
+        Employee employee3 = new Employee("john3",23);
+        Employee employee4 = new Employee("john4",24);
+        Employee employee5 = new Employee("john5",25);
+
+        Department hr = new Department("HR");
+        hr.addEmployee(employee1);
+        hr.addEmployee(employee2);
+        hr.addEmployee(employee3);
+
+        Department accounting = new Department("Accounting");
+        accounting.addEmployee(employee4);
+
+        List<Department> departments = new ArrayList<>();
+        departments.add(hr);
+        departments.add(accounting);
+
+        departments.stream()
+                .flatMap(department -> department.getEmployees().stream())
+                .forEach(System.out::println);
+
+//        List<String> sortedNumbers = someBingoNumbers
+//                .stream()
+//                .map(String::toUpperCase)
+//                .filter(s -> s.startsWith("G"))
+//                .sorted()
+//                .collect(Collectors.toList());
+
+        List<String> sortedNumbers = someBingoNumbers
+                .stream()
+                .map(String::toUpperCase)
+                .filter(s -> s.startsWith("G"))
+                .sorted()
+                .collect(ArrayList::new,ArrayList::add, ArrayList::addAll);
+
+        for(String s : sortedNumbers)
+            System.out.println( "***"+s);
+
+        Map<Integer, List<Employee>> groupedByAge = departments.stream()
+                .flatMap(department -> department.getEmployees().stream())
+                .collect(Collectors.groupingBy(employee -> employee.getAge()));
+
+        departments.stream()
+                .flatMap(department -> department.getEmployees().stream())
+                .collect(Collectors.reducing((e1, e2) -> e1.getAge() < e2.getAge() ? e1:e2))
+                .ifPresent(System.out::println);
+
+/**********************************************/
         someBingoNumbers
                 .stream()
                 .map(String::toUpperCase)
